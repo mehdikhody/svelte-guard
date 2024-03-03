@@ -22,22 +22,22 @@ npm install svelte-guard
 Implementing route guards with `svelte-guard` involves two main steps: creating guard files and registering the guards.
 
 ```
-app
-|-- routes
-|   |-- login
-|   |   |-- -guard.ts					# Redirect if user is already logged in
-|   |   |-- +page.svelte
-|   |-- admin
-|   |   |   |-- settings
-|   |   |   |   |-- -guard.ts			# Extend guard from parent route
-|   |   |   |   |-- +page.svelte
-|   |   |-- -guard.ts					# Protect admin routes
-|   |   |-- +page.svelte
-|   |-- user
-|   |   |-- +page.svelte
-|   |-- +page.svelte
-|   |-- +layout.svelte
-|-- hooks.server.ts
+app                                      #
+|-- routes                               #
+|   |-- login                            #
+|   |   |-- -guard.ts                    # redirect if use is logged in
+|   |   |-- +page.svelte                 #
+|   |-- admin                            #
+|   |   |   |-- settings                 #
+|   |   |   |   |-- -guard.ts            # extend parent guard
+|   |   |   |   |-- +page.svelte         #
+|   |   |-- -guard.ts                    # protect admin routes and its children
+|   |   |-- +page.svelte                 #
+|   |-- user                             #
+|   |   |-- +page.svelte                 #
+|   |-- +page.svelte                     #
+|   |-- +layout.svelte                   #
+|-- hooks.server.ts                      # register guards and hooks
 ```
 
 This structure provides a clear separation of concerns, making it easy to manage and extend the route guarding functionality within SvelteKit applications.
