@@ -25,7 +25,7 @@ Implementing route guards with `svelte-guard` involves two main steps: creating 
 app                                      #
 |-- routes                               #
 |   |-- login                            #
-|   |   |-- -guard.ts                    # redirect if use is logged in
+|   |   |-- -guard.ts                    # redirect if user is logged in
 |   |   |-- +page.svelte                 #
 |   |-- admin                            #
 |   |   |   |-- settings                 #
