@@ -26,7 +26,7 @@ Instead of repeating yourself or cluttering your code with multiple if statement
 
 Example guard file (`routes/admin/-guard.ts`):
 
-```javascript
+```typescript
 // routes/admin/-guard.ts
 import type { Guard } from 'svelte-guard';
 
@@ -45,7 +45,7 @@ To register the guards, you need to create a hook to handle your app requests in
 
 Example hook registration:
 
-```javascript
+```typescript
 // hooks.server.ts
 import { createGuardHook } from 'svelte-guard';
 
@@ -56,7 +56,7 @@ export const handle = createGuardHook(guards);
 
 If you have multiple hooks, you can use the `sequence` function from `@sveltejs/kit/hooks` to serialize them.
 
-```javascript
+```typescript
 // hooks.server.ts
 import { sequence } from '@sveltejs/kit/hooks';
 import { AuthHook } from '$lib/server/hooks/auth-hook';
