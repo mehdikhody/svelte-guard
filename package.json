@@ -1,7 +1,12 @@
 {
 	"name": "svelte-guard",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"license": "MIT",
+	"author": {
+		"email": "khodayari.khoram@gmail.com",
+		"name": "Mehdi Khodayari",
+		"url": "https://github.com/mehdikhody"
+	},
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run package",
@@ -51,5 +56,17 @@
 	},
 	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",
-	"type": "module"
+	"type": "module",
+	"keywords": [
+		"svelte",
+		"sveltekit",
+		"guard",
+		"auth",
+		"authorization",
+		"permission"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/mehdikhody/svelte-guard"
+	}
 }

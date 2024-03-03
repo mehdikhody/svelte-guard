@@ -6,6 +6,8 @@ SvelteGuard is a package designed to simplify the process of guarding protected 
 
 In many SvelteKit applications, ensuring that certain routes are accessible only to authorized users is crucial for security. However, writing and managing guard logic can become cumbersome, especially as your application grows. SvelteGuard streamlines this process by allowing you to define guards for individual routes within your project directory structure.
 
+[Huntabyte](https://www.youtube.com/@Huntabyte) highlights the challenges and pitfalls of using layouts for authentication in SvelteKit applications in this informative video: [Understanding the Problem with Using Layouts for Authentication.](https://www.youtube.com/watch?v=UbhhJWV3bmI)
+
 ## Installation
 
 You can install SvelteGuard via npm with the following command:
@@ -26,11 +28,10 @@ Example guard file (`routes/admin/-guard.js`):
 
 ```javascript
 // routes/admin/-guard.js
-
-export const guard = ({ local }) => {
+export const guard = ({ locals }) => {
 	// Implement your authorization logic here
 	// Return true if the request is authorized, false otherwise
-	return local.user.isAdmin;
+	return locals.user.isAdmin;
 };
 ```
 
@@ -42,7 +43,6 @@ Example hook registration:
 
 ```javascript
 // hooks.server.js
-
 import { createGuardHook } from 'svelte-guard';
 
 // Import all guard files using glob pattern
@@ -54,7 +54,6 @@ If you have multiple hooks, you can use the `sequence` function from `@sveltejs/
 
 ```javascript
 // hooks.server.js
-
 import { sequence } from '@sveltejs/kit/hooks';
 import { AuthHook } from '$lib/server/hooks/auth-hook.js';
 import { createGuardHook } from 'svelte-guard';
