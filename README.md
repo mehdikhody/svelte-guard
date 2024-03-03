@@ -42,6 +42,7 @@ import type { Guard } from 'svelte-guard';
 export const guard: Guard = async ({ locals }) => {
 	// Implement your authorization logic here
 	// Return true if the request is authorized, false otherwise
+	// You can throw a redirect to other routes if needed
 	return locals.user.isAdmin;
 };
 ```
