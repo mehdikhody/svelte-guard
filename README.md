@@ -1,7 +1,8 @@
 # `svelte-guard` - Router Guard for SvelteKit Apps
 
 ![NPM Version](https://img.shields.io/npm/v/svelte-guard)
-![test workflow](https://github.com/mehdikhody/svelte-guard/actions/workflows/test.yml/badge.svg)
+![Test](https://github.com/mehdikhody/svelte-guard/actions/workflows/test.yml/badge.svg)
+![Build](https://github.com/mehdikhody/svelte-guard/actions/workflows/build.yml/badge.svg)
 ![GitHub License](https://img.shields.io/github/license/mehdikhody/svelte-guard)
 ![NPM Downloads](https://img.shields.io/npm/dt/svelte-guard)
 [![GitHub Repo stars](https://img.shields.io/github/stars/mehdikhody/svelte-guard?style=flat)](https://github.com/mehdikhody/svelte-guard)
