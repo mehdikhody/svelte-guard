@@ -1,6 +1,7 @@
 name: 3x-ui Package
 
 on:
+  workflow_dispatch:
   release:
     types: [created]
 
