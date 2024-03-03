@@ -1,4 +1,4 @@
-name: 3x-ui Package
+name: Publish the package
 
 on:
   workflow_dispatch:
