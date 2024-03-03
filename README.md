@@ -72,7 +72,7 @@ export const handle = sequence(AuthHook, GuardHook);
 
 ### Enjoy Protecting Your Routes
 
-With `svelte-guard`, all children routes will be automatically protected, and each route can have its own specific guard. Guards are run for both the parent and current paths, ensuring that routes are accessible only to authorized users. If any guard returns false, a 403 - Forbidden error will be returned.
+With `svelte-guard`, all children routes will be automatically protected, and each route can have its own specific guard. Guards are run for both the parent and current paths, ensuring that routes are accessible only to authorized users. If any guard returns false, a `403 - Forbidden` error will be returned.
 
 ## Contribution
 
