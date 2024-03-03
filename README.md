@@ -1,91 +1,94 @@
-# `svelte-guard` - Router Guard for SvelteKit Apps
+# Router Guard for SvelteKit Apps
 
-![NPM Version](https://img.shields.io/npm/v/svelte-guard)
-![Test](https://github.com/mehdikhody/svelte-guard/actions/workflows/test.yml/badge.svg)
-![Build](https://github.com/mehdikhody/svelte-guard/actions/workflows/build.yml/badge.svg)
-![GitHub License](https://img.shields.io/github/license/mehdikhody/svelte-guard)
-![NPM Downloads](https://img.shields.io/npm/dt/svelte-guard)
-[![GitHub Repo stars](https://img.shields.io/github/stars/mehdikhody/svelte-guard?style=flat)](https://github.com/mehdikhody/svelte-guard)
+`svelte-guard` is a versatile package designed to streamline the process of implementing route guards in SvelteKit applications. Route guards play a crucial role in ensuring that specific routes are accessible only to authorized users, enhancing the security of your application. With `svelte-guard`, you can efficiently manage and implement route guards without cluttering your codebase with repetitive guard logic.
 
-`svelte-guard` is a package designed to simplify the process of guarding protected routes in SvelteKit applications. With `svelte-guard`, you can easily implement route guards without cluttering your `+layout.server.js`, `+page.server.js` or `+server.js` files with repetitive guard logic.
+## Features
 
-## Introduction
-
-In many SvelteKit applications, ensuring that certain routes are accessible only to authorized users is crucial for security. However, writing and managing guard logic can become cumbersome, especially as your application grows. `svelte-guard` streamlines this process by allowing you to define guards for individual routes within your project directory structure.
-
-[Huntabyte](https://www.youtube.com/@Huntabyte) highlights the challenges and pitfalls of using layouts for authentication in SvelteKit applications in this informative video: [Understanding the Problem with Using Layouts for Authentication.](https://www.youtube.com/watch?v=UbhhJWV3bmI)
+- ✅ **Simplicity:** `svelte-guard` simplifies the implementation of route guards by allowing you to define guards for individual routes within your project directory structure.
+- ✅ **Flexibility:** Guards can be implemented as synchronous or asynchronous functions, and requests can be redirected to a different route if necessary.
+- ✅ **Inheritance:** Guards can be inherited from parent routes, allowing you to define a single guard for multiple routes.
+- ✅ **Extensibility:** Alongside inheriting guards, you can also extend guards to add additional functionality to specific routes.
 
 ## Installation
 
-You can install `svelte-guard` via npm with the following command:
+You can easily install `svelte-guard` via `npm` using the following command:
 
 ```bash
 npm install svelte-guard
 ```
 
-## Usage
+## Getting Started
 
-With `svelte-guard`, protecting your routes is straightforward. Here's how you can integrate it into your SvelteKit application:
+Implementing route guards with `svelte-guard` involves two main steps: creating guard files and registering the guards.
 
-### 1. Create Guard Files:
+```
+app
+|-- routes
+|   |-- login
+|   |   |-- -guard.ts					# Redirect if user is already logged in
+|   |   |-- +page.svelte
+|   |-- admin
+|   |   |   |-- settings
+|   |   |   |   |-- -guard.ts			# Extend guard from parent route
+|   |   |   |   |-- +page.svelte
+|   |   |-- -guard.ts					# Protect admin routes
+|   |   |-- +page.svelte
+|   |-- user
+|   |   |-- +page.svelte
+|   |-- +page.svelte
+|   |-- +layout.svelte
+|-- hooks.server.ts
+```
 
-Instead of repeating yourself or cluttering your code with multiple if statements for route authorization, create guard files for your routes. These files should be named following the convention `-guard.js` or `-guard.ts` and placed within the respective route directories.
+This structure provides a clear separation of concerns, making it easy to manage and extend the route guarding functionality within SvelteKit applications.
 
-Example guard file (`routes/admin/-guard.ts`):
+### 1. Create Guard Files
+
+Create guard files for your routes following the convention `-guard.js` or `-guard.ts` and place them within the respective route directories. These guard files encapsulate the authorization logic for each route and its child routes.
 
 ```typescript
 // routes/admin/-guard.ts
 import type { Guard } from 'svelte-guard';
 
-// guard can be async or sync, it's up to you
-// for type safety, you can use: Guard<RequestEvent>
 export const guard: Guard = async ({ locals }) => {
 	// Implement your authorization logic here
-	// Return true if the request is authorized, false otherwise
-	// You can throw a redirect to other routes if needed
 	return locals.user.isAdmin;
 };
 ```
 
-### 2. Registering Guards
+### 2. Register Guards
 
-To register the guards, you need to create a hook to handle your app requests in the `hooks.server.js` or `hooks.server.ts` file. You can use the createGuardHook function provided by `svelte-guard`.
-
-Example hook registration:
+Register the guards by creating a hook to handle app requests in the `hooks.server.js` or `hooks.server.ts` file. Utilize the `createGuardHook` function provided by `svelte-guard` to register the guards.
 
 ```typescript
 // hooks.server.ts
 import { createGuardHook } from 'svelte-guard';
 
-// Import all guard files using glob pattern
 const guards = import.meta.glob('./routes/**/-guard.*');
 export const handle = createGuardHook(guards);
 ```
 
-If you have multiple hooks, you can use the `sequence` function from `@sveltejs/kit/hooks` to serialize them.
+### Additional Configuration
+
+If you have multiple hooks or need to execute guards in a specific sequence, you can utilize the `sequence` function from `@sveltejs/kit/hooks` to serialize the hooks.
 
 ```typescript
 // hooks.server.ts
 import { sequence } from '@sveltejs/kit/hooks';
-import { AuthHook } from '$lib/server/hooks/auth-hook';
 import { createGuardHook } from 'svelte-guard';
 
 const guards = import.meta.glob('./routes/**/-guard.*');
 const GuardHook = createGuardHook(guards);
 
-// First we run the AuthHook, so we can have access to locals.user
-// or locals.session in our guards.
 export const handle = sequence(AuthHook, GuardHook);
 ```
 
-### Enjoy Protecting Your Routes
-
-With `svelte-guard`, all children routes will be automatically protected, and each route can have its own specific guard. Guards are run for both the parent and current paths, ensuring that routes are accessible only to authorized users. If any guard returns false, a `403 - Forbidden` error will be returned.
-
 ## Contribution
 
-Contributions to `svelte-guard` are welcome! Feel free to submit bug reports, feature requests, or pull requests on [GitHub](https://github.com/mehdikhody/svelte-guard).
+Contributions to `svelte-guard` are highly encouraged! Whether it's bug fixes, feature enhancements, or new ideas, your contributions are valuable. You can contribute by submitting bug reports, feature requests, or pull requests on [GitHub](https://github.com/mehdikhody/svelte-guard).
+
+For any questions, feedback, or support inquiries, feel free to reach out via the GitHub repository. We're here to help and improve the library together!
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/mehdikhody/svelte-guard/blob/master/LICENSE) file for details.
+`svelte-guard` is licensed under the MIT License. You can find the detailed licensing information in the [LICENSE](https://github.com/mehdikhody/svelte-guard/blob/master/LICENSE) file.
