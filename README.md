@@ -1,6 +1,6 @@
 # `svelte-guard` - Router Guard for SvelteKit Apps
 
-`svelte-guard` is a package designed to simplify the process of guarding protected routes in SvelteKit applications. With `svelte-guard`, you can easily implement route guards without cluttering your `layout.server.js` or `page.server.js` files with repetitive guard logic.
+`svelte-guard` is a package designed to simplify the process of guarding protected routes in SvelteKit applications. With `svelte-guard`, you can easily implement route guards without cluttering your `+layout.server.js`, `+page.server.js` or `+server.js` files with repetitive guard logic.
 
 ## Introduction
 
@@ -31,7 +31,7 @@ Example guard file (`routes/admin/-guard.ts`):
 import type { Guard } from 'svelte-guard';
 
 // guard can be async or sync, it's up to you
-// for type safety, you can use the Guard type provided by `svelte-guard`
+// for type safety, you can use: Guard<RequestEvent>
 export const guard: Guard = async ({ locals }) => {
 	// Implement your authorization logic here
 	// Return true if the request is authorized, false otherwise
