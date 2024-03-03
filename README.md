@@ -1,58 +1,78 @@
-# create-svelte
+# SvelteGuard - Router Guard for SvelteKit Apps
 
-Everything you need to build a Svelte library, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+SvelteGuard is a package designed to simplify the process of guarding protected routes in SvelteKit applications. With SvelteGuard, you can easily implement route guards without cluttering your `layout.server.js` or `page.server.js` files with repetitive guard logic.
 
-Read more about creating a library [in the docs](https://kit.svelte.dev/docs/packaging).
+## Introduction
 
-## Creating a project
+In many SvelteKit applications, ensuring that certain routes are accessible only to authorized users is crucial for security. However, writing and managing guard logic can become cumbersome, especially as your application grows. SvelteGuard streamlines this process by allowing you to define guards for individual routes within your project directory structure.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Installation
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+You can install SvelteGuard via npm with the following command:
 
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+npm install svelte-guard
 ```
 
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
+## Usage
 
-## Building
+With SvelteGuard, protecting your routes is straightforward. Here's how you can integrate it into your SvelteKit application:
 
-To build your library:
+### 1. Create Guard Files:
 
-```bash
-npm run package
+Instead of repeating yourself or cluttering your code with multiple if statements for route authorization, create guard files for your routes. These files should be named following the convention `-guard.js` or `-guard.ts` and placed within the respective route directories.
+
+Example guard file (`routes/admin/-guard.js`):
+
+```javascript
+// routes/admin/-guard.js
+
+export const guard = ({ local }) => {
+	// Implement your authorization logic here
+	// Return true if the request is authorized, false otherwise
+	return local.user.isAdmin;
+};
 ```
 
-To create a production version of your showcase app:
+### 2. Registering Guards
 
-```bash
-npm run build
+To register the guards, you need to create a hook to handle your app requests in the `hooks.server.js` or `hooks.server.ts` file. You can use the createGuardHook function provided by SvelteGuard.
+
+Example hook registration:
+
+```javascript
+// hooks.server.js
+
+import { createGuardHook } from 'svelte-guard';
+
+// Import all guard files using glob pattern
+const guards = import.meta.glob('./routes/**/-guard.*');
+export const handle = createGuardHook(guards);
 ```
 
-You can preview the production build with `npm run preview`.
+If you have multiple hooks, you can use the `sequence` function from `@sveltejs/kit/hooks` to serialize them.
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+```javascript
+// hooks.server.js
 
-## Publishing
+import { sequence } from '@sveltejs/kit/hooks';
+import { AuthHook } from '$lib/server/hooks/auth-hook.js';
+import { createGuardHook } from 'svelte-guard';
 
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
+const guards = import.meta.glob('./routes/**/-guard.*');
+const GuardHook = createGuardHook(guards);
 
-To publish your library to [npm](https://www.npmjs.com):
-
-```bash
-npm publish
+export const handle = sequence(AuthHook, GuardHook);
 ```
+
+### Enjoy Protecting Your Routes
+
+With SvelteGuard, all children routes will be automatically protected, and each route can have its own specific guard. Guards are run for both the parent and current paths, ensuring that routes are accessible only to authorized users. If any guard returns false, a 403 - Forbidden error will be returned.
+
+## Contribution
+
+Contributions to SvelteGuard are welcome! Feel free to submit bug reports, feature requests, or pull requests on [GitHub](https://github.com/mehdikhody/svelte-guard).
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/mehdikhody/svelte-guard/blob/master/LICENSE) file for details.

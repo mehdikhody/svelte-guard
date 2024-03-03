@@ -1,3 +1,4 @@
 import { createGuardHook } from '$lib/index.js';
 
-export const handle = createGuardHook(import.meta.glob('./routes/**/-guard.*'));
+const guards = import.meta.glob('./routes/**/-guard.*');
+export const handle = createGuardHook(guards);
