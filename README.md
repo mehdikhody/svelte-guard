@@ -1,5 +1,11 @@
 # `svelte-guard` - Router Guard for SvelteKit Apps
 
+![NPM Version](https://img.shields.io/npm/v/svelte-guard)
+![test workflow](https://github.com/mehdikhody/svelte-guard/actions/workflows/test.yml/badge.svg)
+![GitHub License](https://img.shields.io/github/license/mehdikhody/svelte-guard)
+![NPM Downloads](https://img.shields.io/npm/dt/svelte-guard)
+[![GitHub Repo stars](https://img.shields.io/github/stars/mehdikhody/svelte-guard?style=flat)](https://github.com/mehdikhody/svelte-guard)
+
 `svelte-guard` is a package designed to simplify the process of guarding protected routes in SvelteKit applications. With `svelte-guard`, you can easily implement route guards without cluttering your `+layout.server.js`, `+page.server.js` or `+server.js` files with repetitive guard logic.
 
 ## Introduction
