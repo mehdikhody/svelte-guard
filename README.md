@@ -31,7 +31,7 @@ app                                      #
 |   |   |   |-- settings                 #
 |   |   |   |   |-- -guard.ts            # extend parent guard
 |   |   |   |   |-- +page.svelte         #
-|   |   |-- -guard.ts                    # protect admin routes and its children
+|   |   |-- -guard.ts                    # protect admin route and sub-routes
 |   |   |-- +page.svelte                 #
 |   |-- user                             #
 |   |   |-- +page.svelte                 #
