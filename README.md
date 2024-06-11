@@ -83,6 +83,17 @@ const GuardHook = createGuardHook(guards);
 export const handle = sequence(AuthHook, GuardHook);
 ```
 
+## VSCode Settings
+Having multiple `-guard.{ts|js}` files open can be difficult to distinguish. As such, [custom labels](https://code.visualstudio.com/docs/getstarted/userinterface#_customize-tab-labels) for open tabs can be set in VSCode.
+
+You can configure your workspace's `settings.json` file to the settings below. Now, each open `-guard.{ts,js}` tab will show the guard file's directory with designation that it is a guard file.
+```json
+"workbench.editor.customLabels.enabled": true
+"workbench.editor.customLabels.patterns": {
+  "**/src/routes/**/-guard.{ts,js}": "/${dirname} - Guard"
+}
+```
+
 ## Contribution
 
 Contributions to `svelte-guard` are highly encouraged! Whether it's bug fixes, feature enhancements, or new ideas, your contributions are valuable. You can contribute by submitting bug reports, feature requests, or pull requests on [GitHub](https://github.com/mehdikhody/svelte-guard).
