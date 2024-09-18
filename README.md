@@ -55,8 +55,8 @@ export const guard: Guard = async ({ locals }) => {
 	return locals.user.isAdmin;
 };
 
-// required
-export const reroute = "/login";
+// optional
+export const reroute = '/login';
 ```
 
 ### 2. Register Guards
@@ -69,6 +69,8 @@ import { createGuardHook } from 'svelte-guard';
 
 const guards = import.meta.glob('./routes/**/-guard.*');
 export const handle = createGuardHook(guards);
+// export const handle = createGuardHook(guards, '/login');
+// will reroute to /login on 403 error
 ```
 
 ## Example Blocks
@@ -79,18 +81,18 @@ export const handle = createGuardHook(guards);
 /**
  * If you want to redirect users and not display a 403 Forbidden error, export a reroute path like displayed bellow.
  * Perfect for authentication / authorization flows
- */ 
+ */
 import type { Guard } from '$lib/index.js';
 
 export const guard: Guard = async (event) => {
-    console.log(event.locals)
-    // Your own logic implementation 
-    const userHasAccess = false;
+	console.log(event.locals);
+	// Your own logic implementation
+	const userHasAccess = false;
 
-    return userHasAccess
+	return userHasAccess;
 };
 
-export const reroute = "/";
+export const reroute = '/';
 ```
 
 ```typescript
@@ -100,14 +102,14 @@ export const reroute = "/";
  * If an API / endpoint should not be reached by everyone or really needs any type of restriction,
  * there is no need to implement a reroute. Leaving the variable export out of the code automatically
  * responds with a '403 Forbidden' error.
-*/
+ */
 import type { Guard } from '$lib/index.js';
 
 export const guard: Guard = async (event) => {
-    // Your own logic implementation 
-    const shouldReturnCustomerId = false
+	// Your own logic implementation
+	const shouldReturnCustomerId = false;
 
-    return shouldReturnCustomerId;
+	return shouldReturnCustomerId;
 };
 ```
 
@@ -127,9 +129,11 @@ export const handle = sequence(AuthHook, GuardHook);
 ```
 
 ## VSCode Settings
+
 Having multiple `-guard.{ts|js}` files open can be difficult to distinguish. As such, [custom labels](https://code.visualstudio.com/docs/getstarted/userinterface#_customize-tab-labels) for open tabs can be set in VSCode.
 
 You can configure your workspace's `settings.json` file to the settings below. Now, each open `-guard.{ts,js}` tab will show the guard file's directory with designation that it is a guard file.
+
 ```json
 "workbench.editor.customLabels.enabled": true
 "workbench.editor.customLabels.patterns": {
