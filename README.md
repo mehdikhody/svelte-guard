@@ -54,6 +54,9 @@ export const guard: Guard = async ({ locals }) => {
 	// Implement your authorization logic here
 	return locals.user.isAdmin;
 };
+
+// required
+export const reroute = "/login";
 ```
 
 ### 2. Register Guards
@@ -66,6 +69,46 @@ import { createGuardHook } from 'svelte-guard';
 
 const guards = import.meta.glob('./routes/**/-guard.*');
 export const handle = createGuardHook(guards);
+```
+
+## Example Blocks
+
+```typescript
+// src/routes/dashboard/-guard.ts
+
+/**
+ * If you want to redirect users and not display a 403 Forbidden error, export a reroute path like displayed bellow.
+ * Perfect for authentication / authorization flows
+ */ 
+import type { Guard } from '$lib/index.js';
+
+export const guard: Guard = async (event) => {
+    console.log(event.locals)
+    // Your own logic implementation 
+    const userHasAccess = false;
+
+    return userHasAccess
+};
+
+export const reroute = "/";
+```
+
+```typescript
+// src/routes/api/example/-guide.ts
+
+/**
+ * If an API / endpoint should not be reached by everyone or really needs any type of restriction,
+ * there is no need to implement a reroute. Leaving the variable export out of the code automatically
+ * responds with a '403 Forbidden' error.
+*/
+import type { Guard } from '$lib/index.js';
+
+export const guard: Guard = async (event) => {
+    // Your own logic implementation 
+    const shouldReturnCustomerId = false
+
+    return shouldReturnCustomerId;
+};
 ```
 
 ### Additional Configuration
