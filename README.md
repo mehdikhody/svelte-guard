@@ -49,9 +49,11 @@ Create guard files for your routes following the convention `-guard.js` or `-gua
 ```typescript
 // routes/admin/-guard.ts
 import type { Guard } from 'svelte-guard';
+import { redirect } from '@sveltejs/kit';
 
 export const guard: Guard = async ({ locals }) => {
 	// Implement your authorization logic here
+	// return redirect(307, '/login');
 	return locals.user.isAdmin;
 };
 
