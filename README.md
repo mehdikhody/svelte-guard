@@ -9,6 +9,24 @@
 - **✅ Inherited Guards:** Guards can be inherited from parent routes, minimizing duplication of guard logic.
 - **✅ Extensible:** You can extend existing guards to add extra logic for specific routes or groups of routes.
 
+### Directory Structure Example
+
+```plaintext
+app/
+│-- routes/
+│   │-- login/
+│   │   ├── -guard.ts          # Guard for login route
+│   │   └── +page.svelte
+│   │-- admin/
+│   │   ├── settings/
+│   │   │   ├── -guard.ts      # Extends admin guard
+│   │   │   └── +page.svelte
+│   │   ├── -guard.ts          # Admin guard for all sub-routes
+│   │   └── +page.svelte
+│   └── +layout.svelte
+│-- hooks.server.ts            # Register guards here
+```
+
 ## Installation
 
 Install `svelte-guard` via npm:
@@ -37,14 +55,14 @@ export const guard: Guard = async ({ locals }) => {
 	if (!locals.user.isAdmin) {
 		return false; // Access denied
 		// or redirect from here
-		// return return redirect(307, '/login');
+		// return return redirect(307, '/');
 	}
 	return true;
 };
 
 // Optional redirect for unauthorized users
 // this will be the default for nested sub-routes
-export const reroute = '/login';
+export const reroute = '/';
 ```
 
 ### 2. Register Guards
@@ -61,24 +79,6 @@ export const handle = createGuardHook(guards);
 // export const handle = createGuardHook(guards, '/login');
 ```
 
-### Directory Structure Example
-
-```plaintext
-app/
-│-- routes/
-│   │-- login/
-│   │   ├── -guard.ts          # Guard for login route
-│   │   └── +page.svelte
-│   │-- admin/
-│   │   ├── settings/
-│   │   │   ├── -guard.ts      # Extends admin guard
-│   │   │   └── +page.svelte
-│   │   ├── -guard.ts          # Admin guard for all sub-routes
-│   │   └── +page.svelte
-│   └── +layout.svelte
-│-- hooks.server.ts            # Register guards here
-```
-
 ## Example Guards
 
 ### Basic Route Guard
@@ -87,24 +87,28 @@ app/
 // src/routes/dashboard/-guard.ts
 import type { Guard } from 'svelte-guard';
 
-export const guard: Guard = async (event) => {
-	const userHasAccess = false; // Implement your logic
-	return userHasAccess;
+export const guard: Guard = async ({ locals }) => {
+	return locals.session === undefined;
 };
 
 // Redirect if the guard fails
-export const reroute = '/';
+export const reroute = '/login';
 ```
 
 ### API Endpoint Guard
 
 ```typescript
-// src/routes/api/example/-guard.ts
+// src/routes/api/-guard.ts
 import type { Guard } from 'svelte-guard';
 
 export const guard: Guard = async (event) => {
-	const shouldAllow = false; // Implement your logic
-	return shouldAllow;
+	const header = request.headers.get('Authorization');
+	const token = 'xxxxxxxxxxxxxxxx';
+	if (!header || header !== `Bearer ${token}`) {
+		return false;
+	}
+
+	return true;
 };
 
 // No reroute specified = 403 Forbidden on failure
