@@ -54,8 +54,8 @@ export const guard: Guard = async ({ locals }) => {
 	// Example: Check if the user is an admin
 	if (!locals.user.isAdmin) {
 		return false; // Access denied
-		// or redirect from here
-		// return return redirect(307, '/');
+		// or redirect the request in here:
+		// return redirect(307, '/');
 	}
 	return true;
 };
