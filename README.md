@@ -101,7 +101,7 @@ export const reroute = '/login';
 // src/routes/api/-guard.ts
 import type { Guard } from 'svelte-guard';
 
-export const guard: Guard = async (event) => {
+export const guard: Guard = async ({ request }) => {
 	const header = request.headers.get('Authorization');
 	const token = 'xxxxxxxxxxxxxxxx';
 	if (!header || header !== `Bearer ${token}`) {
