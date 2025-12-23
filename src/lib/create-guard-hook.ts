@@ -8,7 +8,7 @@ import { error, redirect } from '@sveltejs/kit';
  * Guards will be loaded from the glob files and
  * will be executed before the route handler.
  */
-export const createGuardHook = (files: GlobFiles<unknown>, reroute?: string): Handle => {
+export const createGuardHook = (files: GlobFiles<unknown>): Handle => {
 	let guards: Guards = {};
 
 	/**
@@ -21,19 +21,19 @@ export const createGuardHook = (files: GlobFiles<unknown>, reroute?: string): Ha
 			guards = await LoadGuards(files as GlobFiles<GuardFile>);
 			guards = Object.freeze(guards);
 		}
-		const routeId = event.route.id || '/';
-		const currentGuards = Object.keys(guards).filter((guardId) => routeId.startsWith(guardId));
-		let parentReroute: string | undefined = reroute;
-		for (const guardId of currentGuards) {
-			const { guard, reroute: guardReroute } = guards[guardId];
-			const result = await guard(event);
 
-			if (typeof guardReroute === 'string') parentReroute = guardReroute;
-			if (!result) {
-				if (parentReroute) redirect(307, parentReroute);
-				else throw error(403, 'Forbidden');
+		const routeId = event.route.id || '/';
+		const routeGuards = Object.keys(guards).filter((guardId) => {
+			return routeId.startsWith(guardId);
+		});
+
+		for (const guardId of routeGuards) {
+			const { guard } = guards[guardId];
+			if (!(await guard(event))) {
+				throw error(403, 'Forbidden');
 			}
 		}
+
 		Reflect.set(event.locals, 'guards', guards);
 		return await resolve(event);
 	};

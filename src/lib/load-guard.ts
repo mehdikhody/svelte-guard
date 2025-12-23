@@ -15,7 +15,7 @@ export const LoadGuards = async (files: GlobFiles<GuardFile>) => {
 		if (!mod || !mod.guard) continue;
 		const route = filename.match(/routes\/(.+?)\/-guard/)?.[1];
 		const routeId = `/${route !== undefined ? route : ''}`;
-		guards[routeId] = { guard: mod.guard, reroute: mod.reroute };
+		guards[routeId] = { guard: mod.guard };
 	}
 	return guards;
 };

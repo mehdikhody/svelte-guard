@@ -9,7 +9,7 @@ import type { Guard } from '$lib/index.js';
  */
 export const guard: Guard = async (/**event */) => {
 	// Implement database logic
-	const userHasAccess = false;
+	const userHasAccess = true;
 
 	return userHasAccess;
 };

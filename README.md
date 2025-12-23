@@ -1,35 +1,54 @@
 # SvelteGuard: Route Guards for SvelteKit
 
-`svelte-guard` is a lightweight and flexible package designed to make route guarding in SvelteKit applications easy and efficient. It ensures that only authorized users can access specific routes, enhancing your app’s security. With `svelte-guard`, you can manage route guards seamlessly, avoiding redundant code across your project.
+`svelte-guard` is a lightweight, flexible package that simplifies route guarding in SvelteKit applications. It ensures only authorized users access protected routes, bolstering your app's security while reducing code duplication. By integrating guards directly into your route structure and leveraging SvelteKit's hooks, `svelte-guard` provides a seamless way to enforce access controls without the pitfalls of traditional layout-based approaches.
+
+## Why Not Use Layouts for Authentication?
+
+While it might seem intuitive to handle authentication in a layout's server `load` function (e.g., for a group of admin routes), this approach has significant limitations. Layout `load` functions run in parallel with nested page `load` functions, meaning sensitive data might still be fetched before authentication fails. Additionally, during client-side navigation, layout checks aren't re-executed, potentially allowing unauthorized access if a session expires or changes.
+
+**For instance:**
+
+- Unauthorized users could trigger database queries, wasting resources or exposing data.
+- Client-side logouts (e.g., via another tab) don't invalidate cached routes, enabling continued access to protected pages.
+
+For a deeper explanation, watch this video: <br>
+[**The Problem with Using Layouts for Auth.**](https://www.youtube.com/watch?v=UbhhJWV3bmI)
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/UbhhJWV3bmI?si=HtGoIH4chk3QPRMu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+It highlights these issues and recommends alternatives like hooks for reliable guarding—exactly what `svelte-guard` provides.
 
 ## Features
 
-- **✅ Simple Setup:** Easily define route guards by adding individual guard files to your routes.
-- **✅ Flexible Guards:** Supports both synchronous and asynchronous guard functions. Guards can redirect users to another route if access is denied.
-- **✅ Inherited Guards:** Guards can be inherited from parent routes, minimizing duplication of guard logic.
-- **✅ Extensible:** You can extend existing guards to add extra logic for specific routes or groups of routes.
+- **Simple Setup:** Define guards in dedicated files within your route directories for easy management.
+- **Flexible Guards:** Support for synchronous or asynchronous functions that can return booleans, throw redirects, or deny access.
+- **Inherited Guards:** Parent route guards automatically apply to children, reducing repetition.
+- **Extensible Logic:** Extend guards for specific sub-routes with additional checks.
+- **Hook Integration:** Runs in SvelteKit's handle hook for consistent enforcement on every request.
 
-### Directory Structure Example
+## Directory Structure Example
 
-```plaintext
-app/
-│-- routes/
-│   │-- login/
-│   │   ├── -guard.ts          # Guard for login route
-│   │   └── +page.svelte
-│   │-- admin/
-│   │   ├── settings/
-│   │   │   ├── -guard.ts      # Extends admin guard
-│   │   │   └── +page.svelte
-│   │   ├── -guard.ts          # Admin guard for all sub-routes
-│   │   └── +page.svelte
-│   └── +layout.svelte
-│-- hooks.server.ts            # Register guards here
+Here's a typical setup in a SvelteKit project:
+
+```text
+src/
+|-- routes/
+|   |-- login/
+|   |   ├── -guard.ts          # redirect if already logged in
+|   |   └── +page.svelte
+|   |-- admin/
+|   |   ├── settings/
+|   |   |   ├── -guard.ts      # Extends the parent admin guard with extra logic
+|   |   |   └── +page.svelte
+|   |   ├── -guard.ts          # Base guard for the admin route and all sub-routes
+|   |   └── +page.svelte
+|   └── +layout.svelte
+|-- hooks.server.ts            # Where you register the guards
 ```
 
 ## Installation
 
-Install `svelte-guard` via npm:
+Install the package via npm:
 
 ```bash
 npm install svelte-guard
@@ -37,89 +56,84 @@ npm install svelte-guard
 
 ## Getting Started
 
-To use `svelte-guard`, you need to define guard files for your routes and register them.
+To implement `svelte-guard`, create guard files in your routes and register them in your server hooks. Guards are functions that determine access: return true to allow, false to deny, or throw a redirect for custom handling.
 
 ### 1. Create Guard Files
 
-Define guards in \`-guard.ts\` (or \`.js\`) files inside your route directories. Each guard file controls access to its associated route and its children.
+Place `-guard.ts` (or `-guard.js`) files in route directories. Each exports a `guard` function of type `Guard` from `svelte-guard`.
 
-Example:
+Example for an admin route:
 
-```typescript
-// routes/admin/-guard.ts
+```ts
+// src/routes/admin/-guard.ts
 import type { Guard } from 'svelte-guard';
 import { redirect } from '@sveltejs/kit';
 
 export const guard: Guard = async ({ locals }) => {
-	// Example: Check if the user is an admin
-	if (!locals.user.isAdmin) {
-		return false; // Access denied
-		// or redirect the request in here:
-		// return redirect(307, '/');
+	// Check if the user is an admin
+	if (!locals.user?.isAdmin) {
+		return false; // Deny access
 	}
-	return true;
-};
 
-// Optional redirect for unauthorized users
-// this will be the default for nested sub-routes
-export const reroute = '/';
+	return true; // Allow access
+};
 ```
 
 ### 2. Register Guards
 
-In \`hooks.server.ts\`, register your route guards using the \`createGuardHook\` function from \`svelte-guard\`:
+In `hooks.server.ts`, use `createGuardHook` to register all guards via a glob import.
 
-```typescript
-// hooks.server.ts
+```ts
+// src/hooks.server.ts
 import { createGuardHook } from 'svelte-guard';
 
 const guards = import.meta.glob('./routes/**/-guard.*');
+
 export const handle = createGuardHook(guards);
-// Optional: Specify a default redirect route if a guard fails
-// export const handle = createGuardHook(guards, '/login');
 ```
 
 ## Example Guards
 
-### Basic Route Guard
+### Basic Protected Route Guard
 
-```typescript
+Protect a dashboard, allowing access only if a session exists:
+
+```ts
 // src/routes/dashboard/-guard.ts
 import type { Guard } from 'svelte-guard';
 
 export const guard: Guard = async ({ locals }) => {
-	return locals.session === undefined;
-};
+	// Redirect if there is no session
+	if (locals.session === undefined) {
+		redirect(307, '/login');
+	}
 
-// Redirect if the guard fails
-export const reroute = '/login';
+	// Allow access if session exists
+	return true;
+};
 ```
 
 ### API Endpoint Guard
 
-```typescript
+Secure an API route with header-based authentication:
+
+```ts
 // src/routes/api/-guard.ts
 import type { Guard } from 'svelte-guard';
 
 export const guard: Guard = async ({ request }) => {
 	const header = request.headers.get('Authorization');
 	const token = 'xxxxxxxxxxxxxxxx';
-	if (!header || header !== `Bearer ${token}`) {
-		return false;
-	}
-
-	return true;
+	return header && header === `Bearer ${token}`;
 };
-
-// No reroute specified = 403 Forbidden on failure
 ```
 
 ## Advanced Configuration
 
-You can chain multiple hooks together using SvelteKit’s \`sequence\` function:
+Chain `svelte-guard` with other hooks using SvelteKit's sequence:
 
-```typescript
-// hooks.server.ts
+```ts
+// src/hooks.server.ts
 import { sequence } from '@sveltejs/kit/hooks';
 import { createGuardHook } from 'svelte-guard';
 
@@ -131,19 +145,21 @@ export const handle = sequence(OtherHook, GuardHook);
 
 ## VSCode Settings
 
-To help you easily identify guard files in VSCode, you can enable custom labels for tabs. Add the following to your \`settings.json\`:
+Enhance your workflow by customizing tab labels for guard files in VSCode. Add this to your `settings.json`:
 
 ```json
-"workbench.editor.customLabels.enabled": true,
-"workbench.editor.customLabels.patterns": {
-  "**/src/routes/**/-guard.{ts,js}": "${dirname} - Guard"
+{
+	"workbench.editor.customLabels.enabled": true,
+	"workbench.editor.customLabels.patterns": {
+		"**/src/routes/**/-guard.{ts,js}": "${dirname} - Guard"
+	}
 }
 ```
 
 ## Contributing
 
-We welcome contributions to \`svelte-guard\`! Whether it's fixing bugs, adding new features, or suggesting improvements, feel free to open issues or submit pull requests on [GitHub](https://github.com/mehdikhody/svelte-guard).
+Contributions are welcome! Whether fixing bugs, adding features, or improving docs, open an issue or pull request on [GitHub](https://github.com/mehdikhody/svelte-guard).
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/mehdikhody/svelte-guard/blob/master/LICENSE) file for details.
+Licensed under the MIT License. See the [LICENSE](https://github.com/mehdikhody/svelte-guard/blob/master/LICENSE) file for details.
