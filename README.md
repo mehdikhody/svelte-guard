@@ -14,7 +14,7 @@ While it might seem intuitive to handle authentication in a layout's server `loa
 For a deeper explanation, watch this video: <br>
 [**The Problem with Using Layouts for Auth.**](https://www.youtube.com/watch?v=UbhhJWV3bmI)
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/UbhhJWV3bmI?si=HtGoIH4chk3QPRMu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![The Problem with Using Layouts for Auth](https://img.youtube.com/vi/UbhhJWV3bmI/0.jpg)](https://www.youtube.com/watch?v=UbhhJWV3bmI)
 
 It highlights these issues and recommends alternatives like hooks for reliable guarding—exactly what `svelte-guard` provides.
 
