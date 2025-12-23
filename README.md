@@ -70,12 +70,12 @@ import type { Guard } from 'svelte-guard';
 import { redirect } from '@sveltejs/kit';
 
 export const guard: Guard = async ({ locals }) => {
-	// Check if the user is an admin
-	if (!locals.user?.isAdmin) {
-		return false; // Deny access
-	}
+    // Check if the user is an admin
+    if (!locals.user?.isAdmin) {
+        return false; // Deny access
+    }
 
-	return true; // Allow access
+    return true; // Allow access
 };
 ```
 
@@ -103,13 +103,13 @@ Protect a dashboard, allowing access only if a session exists:
 import type { Guard } from 'svelte-guard';
 
 export const guard: Guard = async ({ locals }) => {
-	// Redirect if there is no session
-	if (locals.session === undefined) {
-		redirect(307, '/login');
-	}
+    // Redirect if there is no session
+    if (locals.session === undefined) {
+        redirect(307, '/login');
+    }
 
-	// Allow access if session exists
-	return true;
+    // Allow access if session exists
+    return true;
 };
 ```
 
@@ -122,9 +122,9 @@ Secure an API route with header-based authentication:
 import type { Guard } from 'svelte-guard';
 
 export const guard: Guard = async ({ request }) => {
-	const header = request.headers.get('Authorization');
-	const token = 'xxxxxxxxxxxxxxxx';
-	return header && header === `Bearer ${token}`;
+    const header = request.headers.get('Authorization');
+    const token = 'xxxxxxxxxxxxxxxx';
+    return header && header === `Bearer ${token}`;
 };
 ```
 
@@ -149,10 +149,10 @@ Enhance your workflow by customizing tab labels for guard files in VSCode. Add t
 
 ```json
 {
-	"workbench.editor.customLabels.enabled": true,
-	"workbench.editor.customLabels.patterns": {
-		"**/src/routes/**/-guard.{ts,js}": "${dirname} - Guard"
-	}
+    "workbench.editor.customLabels.enabled": true,
+    "workbench.editor.customLabels.patterns": {
+        "**/src/routes/**/-guard.{ts,js}": "${dirname} - Guard"
+    }
 }
 ```
 
