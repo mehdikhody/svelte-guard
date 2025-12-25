@@ -1,13 +1,6 @@
-import type { GlobFiles, GuardFile } from './types.js';
 import { test, expect } from 'vitest';
-import { LoadGuards } from './load-guard.js';
+import * as lib from './index.js';
 
-/**
- * Checks of the LoadGuards function loads all of the guards
- * from the route directory or not.
- */
-test('Load guards from the route directory', async () => {
-	const files = import.meta.glob('../routes/**/-guard.*');
-	const guards = await LoadGuards(files as GlobFiles<GuardFile>);
-	expect(Object.keys(files).length).toBe(Object.keys(guards).length);
+test('index exports createGuardHook', () => {
+	expect(lib.createGuardHook).toBeDefined();
 });

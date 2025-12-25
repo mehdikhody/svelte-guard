@@ -4,9 +4,6 @@ import type { GlobFiles, GuardFile, Guards } from './types.js';
  * Load the guards from the guard files.
  * returns a record with the guards and the route id
  * as key for each guard.
- *
- * Dev notice: Since reroute is an optional arg, mod.reroute doesn't have
- * to be checked in here.
  */
 export const LoadGuards = async (files: GlobFiles<GuardFile>) => {
 	const guards: Guards = {};
